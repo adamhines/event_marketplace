@@ -1,0 +1,125 @@
+<div class="page-header">
+  <h3><%= @event.name %></h3>
+
+  <div class="row">
+    <div class="col-md-12">
+      <dl class="dl-horizontal">
+          <h5>Event Date: <%= @event.date.strftime("%v") %></h5>
+
+          <h5>Event Time: <%= @event.time.strftime("%H:%M:%p") %></h5>
+
+      </dl>
+    </div>
+  </div>
+
+<% if current_user.id == @event.user_id %>
+
+  <div class="btn-group">
+    <a href="/events" class="btn btn-default">
+      Back
+    </a>
+    <a href="/events/<%= @event.id %>/edit" class="btn btn-default">
+      Edit
+    </a>
+    <a href="/delete_event/<%= @event.id %>" class="btn btn-default" rel="nofollow">
+      Delete
+    </a>
+  </div>
+<% end %>
+
+
+
+</div>
+
+<div class="row">
+
+  <% @event.tickets.each do |ticket| %>
+    <div class="col-md-4">
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <%= ticket.title %>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <%= ticket.description %>
+        </div>
+        <div class="panel-body">
+          <p> Price: <%= ticket.price %></p>
+        </div>
+        <div class="panel-footer">
+          <p>
+            Contact:
+            <% User.where(:id => ticket.user_id).each do |owner| %>
+            <%= owner.email %>
+            <% end %>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+
+<div class="col-md-4">
+<div class="panel panel-default ">
+  <div class="panel-heading">
+    <h3 class="panel-title">Add New Ticket</h3>
+  </div>
+  <div class="panel-body">
+    <form action="/create_ticket" method="post">
+      <!-- Hidden input for authenticity token to protect from forgery -->
+      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+      <!-- Label and input for event_id -->
+      <div class="form-group">
+        <input type="hidden" name="event_id" value="<%= @event.id %>">
+      </div>
+
+      <!-- Label and input for user_id -->
+      <div class="form-group">
+
+        <input type="hidden"  name="user_id" value="<%= current_user.id %>">
+      </div>
+
+      <!-- Label and input for title -->
+      <div class="form-group">
+        <label for="title" class="control-label">
+          Title
+        </label>
+
+        <input type="text" id="title" name="title" placeholder="Title" class="form-control" >
+      </div>
+
+      <!-- Label and input for description -->
+      <div class="form-group">
+        <label for="description" class="control-label">
+          Description
+        </label>
+
+        <input type="text" id="description" name="description" placeholder="Description" class="form-control" >
+      </div>
+
+      <!-- Label and input for price -->
+      <div class="form-group">
+        <label for="price" class="control-label">
+          Price
+        </label>
+
+        <input type="text" id="price" name="price" placeholder="Price" class="form-control" >
+      </div>
+
+
+
+  </div>
+  <div class="panel-footer">
+    <button class="btn btn-success">
+      Create Ticket
+    </button>
+  </div>
+  </form>
+</div>
+</div>
+
+</div>
